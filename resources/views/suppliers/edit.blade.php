@@ -273,7 +273,7 @@
                                     <td>{{ $contact->phone }}</td>
                                     <td>{{ $contact->email }}</td>
                                     <td>
-                                        @can('edit_contact'')
+                                        @can('edit_contact')
                                         <button class="btn btn-xs btn-warning" data-toggle="modal" data-target="#contact-edit-{{ $contact->id }}">edit</button>
                                         @endcan
                                       
