@@ -40,4 +40,9 @@ class Supplier extends Model
     {
         return $this->hasMany(Contact::class);
     }
+
+    public function branches()
+    {
+        return $this->hasMany(Branch::class);
+    }
 }

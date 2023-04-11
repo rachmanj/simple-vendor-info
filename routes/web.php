@@ -55,8 +55,14 @@ Route::middleware('auth')->group(function () {
         Route::post('/contact/store', [SupplierController::class, 'contact_store'])->name('contact.store');
         Route::put('/contact/{contact_id}/update', [SupplierController::class, 'contact_update'])->name('contact.update');
         Route::delete('/contact/{contact_id}/delete', [SupplierController::class, 'contact_destroy'])->name('contact.destroy');
+        Route::post('/branch/store', [SupplierController::class, 'branch_store'])->name('branch.store');
+        Route::put('/branch/{branch_id}/update', [SupplierController::class, 'branch_update'])->name('branch.update');
+        Route::delete('/branch/{branch_id}/delete', [SupplierController::class, 'branch_destroy'])->name('branch.destroy');
     });
     Route::resource('suppliers', SupplierController::class);
+
+    // BRANCHES
+    Route::resource('branches', BranchController::class);
 
     // SPECIFICATIONS
     Route::prefix('specifications')->name('specifications.')->group(function () {

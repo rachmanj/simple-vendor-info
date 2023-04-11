@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Branch;
 use App\Models\Brand;
 use App\Models\Contact;
 use App\Models\Document;
@@ -177,6 +178,8 @@ class SupplierController extends Controller
         return redirect()->route('suppliers.index')->with('success', 'Data deleted successfully.');
     }
 
+    // CONTACTS
+
     public function contact_store(Request $request)
     {
         $request->validate([
@@ -222,6 +225,38 @@ class SupplierController extends Controller
 
         return redirect()->route('suppliers.edit', $supplier_id)->with('success', 'Contact deleted successfully');
     }
+
+    // BRANCHES
+
+    public function branch_store(Request $request)
+    {
+        // call branch controller
+        $branch = new BranchController();
+        $branch->store($request);
+
+        return redirect()->route('suppliers.edit', $request->supplier_id)->with('success', 'Branch added successfully');
+    }
+
+    public function branch_update(Request $request, $branch_id)
+    {
+        // call branch controller
+        $branch = new BranchController();
+        $branch->update($request, $branch_id);
+
+        return redirect()->route('suppliers.edit', $request->supplier_id)->with('success', 'Branch updated successfully');
+    }
+
+    public function branch_destroy($branch_id)
+    {
+        // call branch controller
+        $supplier_id = Branch::findOrFail($branch_id)->supplier_id;
+        $branch = new BranchController();
+        $branch->destroy($branch_id);
+
+        return redirect()->route('suppliers.edit', $supplier_id)->with('success', 'Branch deleted successfully');
+    }
+
+    // LEGALITAS
 
     public function legalitas($supplier_id)
     {

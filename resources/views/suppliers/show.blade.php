@@ -73,6 +73,8 @@
                 </dl>
             </div>
 
+
+            {{-- CONTACTS --}}
             <div class="card-header">
                 <h3 class="card-title">Contact Persons</h3>
             </div>
@@ -98,6 +100,30 @@
                     </tbody>
                 </table>
             </div>
+
+            {{-- BRANCHES --}}
+            <div class="card-header">
+                <h3 class="card-title">Branches</h3>
+            </div>
+            <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($supplier->branches as $branch)
+                            <tr>
+                                <td>{{ $branch->name }}</td>
+                                <td>{{ $branch->phone }}</td>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
         </div>
     </div>
 </div>

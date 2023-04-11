@@ -248,10 +248,10 @@
                 </div> <!-- /.card-body -->
             </form>
 
+            <hr>
                 {{-- CONTACTS --}}
                 <div class="card-header">
-                    <h3 class="card-title">Contacts</h3>
-                    {{-- new contact button that call modal create --}}
+                    <h3 class="card-title"><strong>Contacts</strong></h3>
                     <button class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#contact-create"><i class="fas fa-plus"></i> Contact</button>
                 </div>
                 <div class="card-body">
@@ -290,16 +290,60 @@
             
                     </table>
                 </div>
+
+                {{-- hr --}}
+                <hr>
+
+                {{-- BRANCHES --}}
+                <div class="card-header">
+                  <h3 class="card-title"><strong>Branches</strong></h3>
+                  <button class="btn btn-sm btn-primary float-right" data-toggle="modal" data-target="#branch-create"><i class="fas fa-plus"></i> Branch</button>
+              </div>
+
+              {{-- BRANCHES TABLE --}}
+              <div class="card-body">
+                <table class="table table-striped">
+                    <thead>
+                        <tr>
+                            <th>Name</th>
+                            <th>Phone</th>
+                            <th></th>
+                        </tr>
+                    </thead>
+                    <tbody>
+                        @foreach ($supplier->branches as $branch)
+                            <tr>
+                                <td>{{ $branch->name }}</td>
+                                <td>{{ $branch->phone }}</td>
+                                <td>
+                                    @can('edit_branch')
+                                    <button class="btn btn-xs btn-warning" data-toggle="modal" data-target="#branch-edit-{{ $branch->id }}">edit</button>
+                                    @endcan
+                                  
+                                    <form action="{{ route('suppliers.branch.destroy', $branch->id) }}" method="POST" class="d-inline">
+                                        @csrf
+                                        @method('DELETE')
+                                        @can('delete_branch')
+                                        <button type="submit" class="btn btn-xs btn-danger" onclick="return confirm('Are you sure you want delete this branch?')">Delete</button>
+                                        @endcan
+                                    </form>
+                            </tr>
+                        @endforeach
+                    </tbody>
+                </table>
+            </div>
+
+
         </div>
     </div>
 </div>
 
-{{-- Modal Create --}}
+{{-- MODAL CREATE CONTACT --}}
 <div class="modal fade" id="contact-create">
     <div class="modal-dialog">
     <div class="modal-content">
         <div class="modal-header">
-        <h4 class="modal-title"> Edit Contact</h4>
+        <h4 class="modal-title"> Create Contact</h4>
         <button type="button" class="close" data-dismiss="modal" aria-label="Close">
             <span aria-hidden="true">&times;</span>
         </button>
@@ -355,8 +399,8 @@
 </div>
 
 
+    {{-- MODAL EDIT CONTACT --}}
     @foreach ($supplier->contacts as $contact)
-    {{-- Modal Edit --}}
     <div class="modal fade" id="contact-edit-{{ $contact->id }}">
         <div class="modal-dialog">
         <div class="modal-content">
@@ -416,6 +460,99 @@
         </div> <!-- /.modal-dialog -->
     </div>
     @endforeach
+
+    {{-- MODAL CREATE BRANCH --}}
+  <div class="modal fade" id="branch-create">
+    <div class="modal-dialog">
+    <div class="modal-content">
+        <div class="modal-header">
+        <h4 class="modal-title"> Create Branch</h4>
+        <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+            <span aria-hidden="true">&times;</span>
+        </button>
+        </div>
+        <form action="{{ route('suppliers.branch.store') }}" method="POST">
+        @csrf
+        <input type="hidden" name="supplier_id" value="{{ $supplier->id }}">
+        <div class="modal-body">
+
+        <div class="form-group">
+            <label for="name">Name</label>
+            <input type="text" name="name" value="{{ old('name') }}" id="name" class="form-control @error('name') is-invalid @enderror">
+            @error('name')
+            <div class="invalid-feedback">
+            {{ $message }}
+            </div>
+            @enderror
+        </div>
+
+        <div class="form-group">
+            <label for="phone">Phone</label>
+            <input type="text" name="phone" value="{{ old('phone') }}" id="phone" class="form-control @error('phone') is-invalid @enderror">
+            @error('phone')
+            <div class="invalid-feedback">
+            {{ $message }}
+            </div>
+            @enderror
+        </div>
+
+        </div> <!-- /.modal-body -->
+        <div class="modal-footer float-left">
+            <button type="button" class="btn btn-sm btn-default" data-dismiss="modal"> Close</button>
+            <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Save</button>
+        </div>
+    </form>
+    </div> <!-- /.modal-content -->
+    </div> <!-- /.modal-dialog -->
+  </div>
+
+  {{-- MODAL EDIT BRANCH --}}
+  @foreach ($supplier->branches as $branch)
+  <div class="modal fade" id="branch-edit-{{ $branch->id }}">
+      <div class="modal-dialog">
+      <div class="modal-content">
+          <div class="modal-header">
+          <h4 class="modal-title"> Edit Branch</h4>
+          <button type="button" class="close" data-dismiss="modal" aria-label="Close">
+              <span aria-hidden="true">&times;</span>
+          </button>
+          </div>
+          <form action="{{ route('suppliers.branch.update', $branch->id) }}" method="POST">
+          @csrf @method('PUT')
+          <input type="hidden" name="supplier_id" value="{{ $supplier->id }}">
+          <div class="modal-body">
+
+          <div class="form-group">
+              <label for="name">Name</label>
+              <input type="text" name="name" value="{{ $branch->name }}" id="name" class="form-control @error('name') is-invalid @enderror">
+              @error('name')
+              <div class="invalid-feedback">
+              {{ $message }}
+              </div>
+              @enderror
+          </div>
+
+          <div class="form-group">
+              <label for="phone">Phone</label>
+              <input type="text" name="phone" value="{{ $branch->phone }}" id="phone" class="form-control @error('phone') is-invalid @enderror">
+              @error('phone')
+              <div class="invalid-feedback">
+              {{ $message }}
+              </div>
+              @enderror
+          </div>
+
+          </div> <!-- /.modal-body -->
+          <div class="modal-footer float-left">
+              <button type="button" class="btn btn-sm btn-default" data-dismiss="modal"> Close</button>
+              <button type="submit" class="btn btn-sm btn-primary"><i class="fas fa-save"></i> Save</button>
+          </div>
+      </form>
+      </div> <!-- /.modal-content -->
+      </div> <!-- /.modal-dialog -->
+  </div>
+  @endforeach
+
 @endsection
 
 @section('styles')
