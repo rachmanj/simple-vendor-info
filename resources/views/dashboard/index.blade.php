@@ -10,7 +10,7 @@
 
 @section('content')
     <div class="row">
-      <h3>Welcome to the jungle, {{ auth()->user()->name }} ... </h3>
+      <h3>Welcome {{ auth()->user()->name }} ... </h3>
     </div>
 
     <div class="row">

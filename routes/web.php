@@ -9,6 +9,7 @@ use App\Http\Controllers\RegisterController;
 use App\Http\Controllers\RoleController;
 use App\Http\Controllers\SpecificationController;
 use App\Http\Controllers\SupplierController;
+use App\Http\Controllers\SupplierPageController;
 use App\Http\Controllers\UserController;
 use Illuminate\Support\Facades\Route;
 
@@ -60,6 +61,22 @@ Route::middleware('auth')->group(function () {
         Route::delete('/branch/{branch_id}/delete', [SupplierController::class, 'branch_destroy'])->name('branch.destroy');
     });
     Route::resource('suppliers', SupplierController::class);
+
+    // VENDOR PROFILE SELF SUBMIT
+    Route::prefix('supplier-page')->name('supplier-page.')->group(function () {
+        Route::get('data', [SupplierPageController::class, 'data'])->name('data');
+        Route::get('/{supplier_id}/legalitas', [SupplierPageController::class, 'legalitas'])->name('legalitas');
+        Route::post('/{supplier_id}/legalitas/store', [SupplierPageController::class, 'legalitas_store'])->name('legalitas.store');
+        Route::put('/legalitas/{document_id}/update', [SupplierPageController::class, 'legalitas_update'])->name('legalitas.update');
+        Route::delete('/legalitas/{document_id}/delete', [SupplierPageController::class, 'legalitas_destroy'])->name('legalitas.destroy');
+        Route::post('/contact/store', [SupplierPageController::class, 'contact_store'])->name('contact.store');
+        Route::put('/contact/{contact_id}/update', [SupplierPageController::class, 'contact_update'])->name('contact.update');
+        Route::delete('/contact/{contact_id}/delete', [SupplierPageController::class, 'contact_destroy'])->name('contact.destroy');
+        Route::post('/branch/store', [SupplierPageController::class, 'branch_store'])->name('branch.store');
+        Route::put('/branch/{branch_id}/update', [SupplierPageController::class, 'branch_update'])->name('branch.update');
+        Route::delete('/branch/{branch_id}/delete', [SupplierPageController::class, 'branch_destroy'])->name('branch.destroy');
+    });
+    Route::resource('supplier-page', SupplierPageController::class);
 
     // BRANCHES
     Route::resource('branches', BranchController::class);

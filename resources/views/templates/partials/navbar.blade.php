@@ -13,11 +13,22 @@
     <div class="collapse navbar-collapse order-3" id="navbarCollapse">
       <!-- Left navbar links -->
       <ul class="navbar-nav">
+
+        @can('access_dashboard')
         <li class="nav-item">
           <a href="{{ route('dashboard.index') }}" class="nav-link">Dashboard</a>
         </li>
+        @endcan
 
-        @include('templates.partials.menu.suppliers')
+        @can('access_vendor_page')
+        <li class="nav-item">
+          <a href="{{ route('supplier-page.index') }}" class="nav-link">Vendor Page</a>
+        </li>
+        @endcan
+
+        @can('access_vendor')
+          @include('templates.partials.menu.suppliers')
+        @endcan
 
         @can('access_admin')
           @include('templates.partials.menu.admin')

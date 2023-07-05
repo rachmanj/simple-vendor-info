@@ -10,13 +10,14 @@ use App\Models\LegalitasType;
 use App\Models\Specification;
 use App\Models\Supplier;
 use Carbon\Carbon;
+use Dflydev\DotAccessData\Util;
 use Illuminate\Http\Request;
 
-class SupplierController extends Controller
+class SupplierPageController extends Controller
 {
     public function index()
     {
-        return view('suppliers.index');
+        return view('supplier-page.index');
     }
 
     public function create()
@@ -26,8 +27,9 @@ class SupplierController extends Controller
         $brands = Brand::orderBy('name', 'asc')->get();
         $document_types = LegalitasType::orderBy('name', 'asc')->get();
         $nomor = app(UtilsController::class)->nomor_registrasi();
+        // $nomor = $this->nomor_registrasi();
 
-        return view('suppliers.create', compact('nomor', 'badan_hukum', 'specifications', 'brands', 'document_types'));
+        return view('supplier-page.create', compact('nomor', 'badan_hukum', 'specifications', 'brands', 'document_types'));
     }
 
     public function store(Request $request)
@@ -39,7 +41,7 @@ class SupplierController extends Controller
         ]);
 
         $supplier = new Supplier();
-        $supplier->reg_no = app(UtilsController::class)->nomor_registrasi();
+        $supplier->reg_no = app(UtilsController::class)->nomor_registrasi();;
         $supplier->name = $request->name;
         $supplier->sap_code = $request->sap_code;
         $supplier->badan_hukum = $request->badan_hukum;
@@ -55,7 +57,7 @@ class SupplierController extends Controller
         $supplier->country = $request->country;
         $supplier->experience = $request->experience;
         $supplier->jumlah_karyawan = $request->jumlah_karyawan;
-        $supplier->status = $request->status;
+        $supplier->status = 'inactive';
         $supplier->remarks = $request->remarks;
         $supplier->created_by = auth()->user()->id;
         $supplier->save();
@@ -86,7 +88,7 @@ class SupplierController extends Controller
             }
         }
 
-        return redirect()->route('suppliers.index')->with('success', 'Data created successfully.');
+        return redirect()->route('supplier-page.index')->with('success', 'Data created successfully.');
     }
 
     public function show($id)
@@ -96,7 +98,7 @@ class SupplierController extends Controller
         // legalitas if exists
         $legalitas = Document::where('supplier_id', $id)->get();
 
-        return view('suppliers.show', compact('supplier', 'address', 'legalitas'));
+        return view('supplier-page.show', compact('supplier', 'address', 'legalitas'));
     }
 
     public function edit($id)
@@ -107,7 +109,7 @@ class SupplierController extends Controller
         $brands = Brand::orderBy('name', 'asc')->get();
         $document_types = LegalitasType::orderBy('name', 'asc')->get();
 
-        return view('suppliers.edit', compact('supplier', 'badan_hukum', 'specifications', 'brands', 'document_types'));
+        return view('supplier-page.edit', compact('supplier', 'badan_hukum', 'specifications', 'brands', 'document_types'));
     }
 
     public function update(Request $request, $id)
@@ -152,7 +154,7 @@ class SupplierController extends Controller
             $supplier->brands()->detach();
         }
 
-        return redirect()->route('suppliers.edit', $id)->with('success', 'Data updated successfully.');
+        return redirect()->route('supplier-page.edit', $id)->with('success', 'Data updated successfully.');
     }
 
     public function destroy($id)
@@ -174,7 +176,7 @@ class SupplierController extends Controller
         // delete supplier
         $supplier->delete();
 
-        return redirect()->route('suppliers.index')->with('success', 'Data deleted successfully.');
+        return redirect()->route('supplier-page.index')->with('success', 'Data deleted successfully.');
     }
 
     // CONTACTS
@@ -195,7 +197,7 @@ class SupplierController extends Controller
             'phone' => $request->phone,
         ]);
 
-        return redirect()->route('suppliers.edit', $request->supplier_id)->with('success', 'Contact added successfully');
+        return redirect()->route('supplier-page.edit', $request->supplier_id)->with('success', 'Contact added successfully');
     }
 
     public function contact_update(Request $request, $contact_id)
@@ -213,7 +215,7 @@ class SupplierController extends Controller
         $contact->phone = $request->phone;
         $contact->save();
 
-        return redirect()->route('suppliers.edit', $contact->supplier_id)->with('success', 'Contact updated successfully');
+        return redirect()->route('supplier-page.edit', $contact->supplier_id)->with('success', 'Contact updated successfully');
     }
 
     public function contact_destroy($contact_id)
@@ -222,7 +224,7 @@ class SupplierController extends Controller
         $supplier_id = $contact->supplier_id;
         $contact->delete();
 
-        return redirect()->route('suppliers.edit', $supplier_id)->with('success', 'Contact deleted successfully');
+        return redirect()->route('supplier-page.edit', $supplier_id)->with('success', 'Contact deleted successfully');
     }
 
     // BRANCHES
@@ -233,7 +235,7 @@ class SupplierController extends Controller
         $branch = new BranchController();
         $branch->store($request);
 
-        return redirect()->route('suppliers.edit', $request->supplier_id)->with('success', 'Branch added successfully');
+        return redirect()->route('supplier-page.edit', $request->supplier_id)->with('success', 'Branch added successfully');
     }
 
     public function branch_update(Request $request, $branch_id)
@@ -242,7 +244,7 @@ class SupplierController extends Controller
         $branch = new BranchController();
         $branch->update($request, $branch_id);
 
-        return redirect()->route('suppliers.edit', $request->supplier_id)->with('success', 'Branch updated successfully');
+        return redirect()->route('supplier-page.edit', $request->supplier_id)->with('success', 'Branch updated successfully');
     }
 
     public function branch_destroy($branch_id)
@@ -252,7 +254,7 @@ class SupplierController extends Controller
         $branch = new BranchController();
         $branch->destroy($branch_id);
 
-        return redirect()->route('suppliers.edit', $supplier_id)->with('success', 'Branch deleted successfully');
+        return redirect()->route('supplier-page.edit', $supplier_id)->with('success', 'Branch deleted successfully');
     }
 
     // LEGALITAS
@@ -263,7 +265,7 @@ class SupplierController extends Controller
         $legalitas = Document::where('supplier_id', $supplier_id)->get();
         $document_types = LegalitasType::orderBy('name', 'asc')->get();
 
-        return view('suppliers.legalitas', compact('supplier', 'legalitas', 'document_types'));
+        return view('supplier-page.legalitas', compact('supplier', 'legalitas', 'document_types'));
     }
 
     public function legalitas_store(Request $request)
@@ -291,7 +293,7 @@ class SupplierController extends Controller
         $legalitas->created_by = auth()->user()->id;
         $legalitas->save();
 
-        return redirect()->route('suppliers.legalitas', $request->supplier_id)->with('success', 'Data berhasil disimpan');
+        return redirect()->route('supplier-page.legalitas', $request->supplier_id)->with('success', 'Data berhasil disimpan');
     }
 
     public function legalitas_update(Request $request, $document_id)
@@ -314,7 +316,7 @@ class SupplierController extends Controller
 
         $legalitas->save();
 
-        return redirect()->route('suppliers.legalitas', $request->supplier_id)->with('success', 'Data berhasil disimpan');
+        return redirect()->route('supplier-page.legalitas', $request->supplier_id)->with('success', 'Data berhasil disimpan');
     }
 
     public function legalitas_destroy($document_id)
@@ -323,12 +325,14 @@ class SupplierController extends Controller
         $supplier_id = $legalitas->supplier_id;
         $legalitas->delete();
 
-        return redirect()->route('suppliers.legalitas', $supplier_id)->with('success', 'Data berhasil dihapus');
+        return redirect()->route('supplier-page.legalitas', $supplier_id)->with('success', 'Data berhasil dihapus');
     }
 
     public function data()
     {
-        $suppliers = Supplier::orderBy('name', 'asc')->get();
+        $suppliers = Supplier::where('created_by', auth()->user()->id)
+            ->orderBy('name', 'asc')
+            ->get();
 
         return datatables()->of($suppliers)
             ->editColumn('experience', function ($suppliers) {
@@ -354,7 +358,7 @@ class SupplierController extends Controller
                 }
                 return $specifications;
             })
-            ->addColumn('action', 'suppliers.action')
+            ->addColumn('action', 'supplier-page.action')
             ->addIndexColumn()
             ->rawColumns(['action', 'status', 'name', 'specifications'])
             ->toJson();
